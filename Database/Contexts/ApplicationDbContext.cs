@@ -27,7 +27,8 @@ namespace ProductsAdmin.Database.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //TODO: Add configuration from appsetting
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=DESKTOP-T2SLFQC\\NERRSQL;Database=ProductsAdmin;Trusted_Connection=True;");
             }
         }
 
@@ -39,7 +40,7 @@ namespace ProductsAdmin.Database.Contexts
             {
                 entity.ToTable("Color");
 
-                entity.HasIndex(e => new { e.Format, e.Value }, "UQ__Color__DB78D09246A669D4")
+                entity.HasIndex(e => new { e.Format, e.Value }, "UQ__Color__DB78D09281BB57F8")
                     .IsUnique();
 
                 entity.Property(e => e.CreatedAt)
@@ -101,6 +102,12 @@ namespace ProductsAdmin.Database.Contexts
 
                 entity.Property(e => e.Price).HasColumnType("money");
 
+                entity.HasOne(d => d.Color)
+                    .WithMany(p => p.ProductPrices)
+                    .HasForeignKey(d => d.ColorId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__ProductPr__Color__47DBAE45");
+
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.ProductPrices)
                     .HasForeignKey(d => d.ProductId)
@@ -116,7 +123,7 @@ namespace ProductsAdmin.Database.Contexts
 
             modelBuilder.Entity<Status>(entity =>
             {
-                entity.HasIndex(e => new { e.Name, e.Type }, "UQ__Statuses__CCEE0EBEEC825D76")
+                entity.HasIndex(e => new { e.Name, e.Type }, "UQ__Statuses__CCEE0EBEBF6E4C7E")
                     .IsUnique();
 
                 entity.Property(e => e.Name)
