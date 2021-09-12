@@ -8,6 +8,7 @@ using ProductsAdmin.Extensions;
 using ProductsAdmin.Models.Api;
 using ProductsAdmin.Models.Api.Requests;
 using ProductsAdmin.Models.Api.Responses;
+using ProductsAdmin.Models.Request.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,19 +30,22 @@ namespace ProductsAdmin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] PaginationParameters paginationParameters)
+        public async Task<IActionResult> GetAll(
+            [FromQuery] PaginationParameters paginationQuery,
+            [FromQuery] SearchProductQuery searchProductQuery
+        )
         {
             try
             {
                 await Task.FromResult(0);
-                if (paginationParameters.Page <= 0)
+                if (paginationQuery.Page <= 0)
                 {
-                    paginationParameters.Page = configuration.GetValue<int>("Pagination:DefaultPage");
+                    paginationQuery.Page = configuration.GetValue<int>("Pagination:DefaultPage");
                 }
 
-                if (paginationParameters.PageSize <= 0)
+                if (paginationQuery.PageSize <= 0)
                 {
-                    paginationParameters.PageSize = configuration.GetValue<int>("Pagination:PageLimit");
+                    paginationQuery.PageSize = configuration.GetValue<int>("Pagination:PageLimit");
                 }
 
                 var products = context.Products
@@ -51,12 +55,14 @@ namespace ProductsAdmin.Controllers
                         .Include(e => e.ProductPrices)
                             .ThenInclude(e => e.Color)
                     .AsNoTracking()
-                    .AsQueryable()
-                    .Paginate(paginationParameters.Page, paginationParameters.PageSize)
+                    .AsQueryable();
+                products = ApplayFilter(searchProductQuery, products);
+
+                var result = products.Paginate(paginationQuery.Page, paginationQuery.PageSize)
                     .Select(ConvertDatabaseToRest.ConvertProductToProductRestResponse)
                     .ToList();
 
-                var response = new RestPaginatedResponse<ProductRestResponse>(products, paginationParameters);
+                var response = new RestPaginatedResponse<ProductRestResponse>(result, paginationQuery);
 
                 return Ok(response);
             }
@@ -205,5 +211,18 @@ namespace ProductsAdmin.Controllers
             }
         }
 
+        private static IQueryable<Product> ApplayFilter(SearchProductQuery searchProductQuery, IQueryable<Product> products)
+        {
+            if (searchProductQuery.Name != null && !string.IsNullOrWhiteSpace(searchProductQuery.Name))
+            {
+                products = products.Where(e => e.Name.ToLower().Contains(searchProductQuery.Name.ToLower()));
+            }
+            if (searchProductQuery.Description != null && !string.IsNullOrWhiteSpace(searchProductQuery.Description))
+            {
+                products = products.Where(e => e.Description.ToLower().Contains(searchProductQuery.Description.ToLower()));
+            }
+
+            return products;
+        }
     }
 }
