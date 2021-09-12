@@ -20,7 +20,7 @@ import { APIResponse, Price, Product } from "../models/api.models";
 export const ProductPage = () => {
     const history = useHistory();
     const [products, setProducts] = useState<Product[]>();
-    const [pagintion, setPagintion] = useState<APIResponse<Product>>();
+    const [pagination, setPagintion] = useState<APIResponse<Product>>();
     const [search, setSearch] = useState({
         value: "",
     });
@@ -52,7 +52,7 @@ export const ProductPage = () => {
     };
 
     return (
-        <div>
+        <>
             <InputGroup>
                 <Input
                     placeholder="Buscar producto"
@@ -64,69 +64,84 @@ export const ProductPage = () => {
                 </InputGroupAddon>
             </InputGroup>
             <hr />
-            <h4>{pagintion?.pagination.total} productos encontrados</h4>
-            <hr />
-            <div className="row p-3">
-                {products?.map((product) => (
-                    <Col lg={4} key={product.id} className="mt-2">
-                        <Card>
-                            <CardBody>
-                                <CardTitle tag="h5">{product.name}</CardTitle>
-                                <CardSubtitle
-                                    tag="h6"
-                                    className="mb-2 text-muted"
-                                >
-                                    Descripción
-                                </CardSubtitle>
-                                <CardText>{product.description}</CardText>
-                                <hr />
+            {!pagination && <h3>Cargando...</h3>}
+            {pagination && (
+                <div>
+                    <h4>
+                        {pagination?.pagination.total} productos encontrados
+                    </h4>
+                    <hr />
+                    <div className="row p-3">
+                        {products?.map((product) => (
+                            <Col lg={4} key={product.id} className="mt-2">
+                                <Card>
+                                    <CardBody>
+                                        <CardTitle tag="h5">
+                                            {product.name}
+                                        </CardTitle>
+                                        <CardSubtitle
+                                            tag="h6"
+                                            className="mb-2 text-muted"
+                                        >
+                                            Descripción
+                                        </CardSubtitle>
+                                        <CardText>
+                                            {product.description}
+                                        </CardText>
+                                        <hr />
 
-                                <CardSubtitle
-                                    tag="h6"
-                                    className="mb-2 text-muted"
-                                >
-                                    Precio: $
-                                    {
-                                        product.prices.find(
-                                            (e) => e.isDefaultPrice
-                                        ).price
-                                    }
-                                    <ColorElement
-                                        colorValue={
-                                            product.prices.find(
-                                                (e) => e.isDefaultPrice
-                                            ).colorValue
-                                        }
-                                    />
-                                </CardSubtitle>
-                                <hr />
-                                <CardSubtitle
-                                    tag="h6"
-                                    className="mb-2 text-muted"
-                                >
-                                    Disponible en:
-                                    <br />
-                                    {product.prices.map((price) => (
-                                        <ColorElement
-                                            key={price.id}
-                                            colorValue={price.colorValue}
-                                        />
-                                    ))}
-                                </CardSubtitle>
+                                        <CardSubtitle
+                                            tag="h6"
+                                            className="mb-2 text-muted"
+                                        >
+                                            Precio: $
+                                            {
+                                                product.prices.find(
+                                                    (e) => e.isDefaultPrice
+                                                ).price
+                                            }
+                                            <ColorElement
+                                                colorValue={
+                                                    product.prices.find(
+                                                        (e) => e.isDefaultPrice
+                                                    ).colorValue
+                                                }
+                                            />
+                                        </CardSubtitle>
+                                        <hr />
+                                        <CardSubtitle
+                                            tag="h6"
+                                            className="mb-2 text-muted"
+                                        >
+                                            Disponible en:
+                                            <br />
+                                            {product.prices.map((price) => (
+                                                <ColorElement
+                                                    key={price.id}
+                                                    colorValue={
+                                                        price.colorValue
+                                                    }
+                                                />
+                                            ))}
+                                        </CardSubtitle>
 
-                                <Button
-                                    onClick={() => {
-                                        history.push(`products/${product.id}`);
-                                    }}
-                                >
-                                    Ver
-                                </Button>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                ))}
-            </div>
-        </div>
+                                        <Button
+                                            onClick={() => {
+                                                history.push(
+                                                    `products/${product.id}`
+                                                );
+                                            }}
+                                        >
+                                            Ver
+                                        </Button>
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

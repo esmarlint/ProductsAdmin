@@ -34,3 +34,27 @@ export interface Price {
     colorName: string;
     colorFormat: string;
 }
+
+export interface Color {
+    id: number;
+    name: string;
+    value: string;
+    format: string;
+    createdAt: Date;
+    statusName: string;
+    statusId: number;
+}
+
+export interface CreateProductRequest {
+    name: string;
+    description: string;
+    statusId: number;
+    prices: CreatePriceRequest[];
+}
+
+export interface CreatePriceRequest {
+    price: number;
+    statusId: number;
+    isDefaultPrice: boolean;
+    colorId: number;
+}

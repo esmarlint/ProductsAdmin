@@ -211,6 +211,51 @@ namespace ProductsAdmin.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                var product = context.Products
+                    .Include(e => e.StatusNavigation)
+                    .Include(e => e.ProductPrices)
+                        .ThenInclude(e => e.StatusNavigation)
+                    .Include(e => e.ProductPrices)
+                        .ThenInclude(e => e.Color)
+                .AsNoTracking()
+                .FirstOrDefault(e => e.Id == id);
+
+                if (product == null)
+                {
+                    var errorResponse = new RestErrorResponse();
+                    errorResponse.ErrorType = "resource_not_found";
+                    errorResponse.Error = $"Product with <Id> -> <{id}> doesn´t exists";
+
+                    return NotFound(errorResponse);
+                }
+
+                product.Status = 3;
+
+                context.Entry(product).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+
+                var result = ConvertDatabaseToRest.ConvertProductToProductRestResponse(product);
+                var response = new RestOkResponse<ProductRestResponse>(result);
+
+                return Ok(response);
+
+            }
+            catch (Exception e)
+            {
+
+                var errorResponse = new RestErrorResponse();
+                errorResponse.ErrorType = "server_error";
+                errorResponse.Error = $"Server can´t handle the request";
+
+                return StatusCode(500, errorResponse);
+            }
+        }
+
         private static IQueryable<Product> ApplayFilter(SearchProductQuery searchProductQuery, IQueryable<Product> products)
         {
             if (searchProductQuery.Name != null && !string.IsNullOrWhiteSpace(searchProductQuery.Name))

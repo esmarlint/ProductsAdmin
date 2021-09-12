@@ -19,7 +19,7 @@ export const ProductDetail = () => {
     }, []);
 
     return (
-        <div>
+        <>
             {!product && <h3>Cargando...</h3>}
             {product && (
                 <div>
@@ -46,6 +46,6 @@ export const ProductDetail = () => {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 };
