@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
     Card,
     CardImg,
@@ -17,6 +18,7 @@ import {
 import { APIResponse, Price, Product } from "../models/api.models";
 
 export const ProductPage = () => {
+    const history = useHistory();
     const [products, setProducts] = useState<Product[]>();
     const [pagintion, setPagintion] = useState<APIResponse<Product>>();
     const [search, setSearch] = useState({
@@ -112,7 +114,13 @@ export const ProductPage = () => {
                                     ))}
                                 </CardSubtitle>
 
-                                <Button>Ver</Button>
+                                <Button
+                                    onClick={() => {
+                                        history.push(`products/${product.id}`);
+                                    }}
+                                >
+                                    Ver
+                                </Button>
                             </CardBody>
                         </Card>
                     </Col>
@@ -122,7 +130,7 @@ export const ProductPage = () => {
     );
 };
 
-function ColorElement({ colorValue }: any) {
+export function ColorElement({ colorValue, handleClick }: any) {
     return (
         <button
             className="btn m-1"
@@ -133,6 +141,7 @@ function ColorElement({ colorValue }: any) {
                 padding: "10px",
                 borderRadius: "100px",
             }}
+            onClick={handleClick}
         ></button>
     );
 }
