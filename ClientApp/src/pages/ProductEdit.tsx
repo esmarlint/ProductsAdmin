@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Color, CreateProductRequest, Price, Product } from "../models/api.models";
 import { ColorElement } from "./ProductPage";
 import { useParams } from "react-router-dom";
-
+import toast from "toastr";
 export const ProductEdit = () => {
     const params = useParams();
 
@@ -63,7 +63,14 @@ export const ProductEdit = () => {
             ...form,
         };
         axios.put(`/api/v1/product/${params.id}`, request).then((response) => {
-            window.alert("Producto actualizado");
+            toast.info("Producto actualizado");
+        });
+    };
+
+    const handleChangeCheckbox = (event) => {
+        setNewPrice({
+            ...newPrice,
+            [event.target.name]: event.target.checked,
         });
     };
 
@@ -140,6 +147,7 @@ export const ProductEdit = () => {
                     <div className="form-row">
                         <div className="form-group col-2">
                             <input
+                                required
                                 type="number"
                                 className="form-control"
                                 name="price"
@@ -150,6 +158,7 @@ export const ProductEdit = () => {
                         </div>
                         <div className="form-group col-3">
                             <select
+                                required
                                 name="colorId"
                                 className="form-control"
                                 onChange={handleChangeNewPrice}
@@ -164,11 +173,12 @@ export const ProductEdit = () => {
                         </div>
                         <div className="form-group col-4">
                             <input
+                                required
                                 id="isDefaultPrice"
                                 type="checkbox"
                                 name="isDefaultPrice"
                                 checked={newPrice.isDefaultPrice}
-                                onChange={handleChangeNewPrice}
+                                onChange={handleChangeCheckbox}
                                 placeholder="Precio"
                             />
                             <label htmlFor="isDefaultPrice">Establecer como precio por defecto</label>

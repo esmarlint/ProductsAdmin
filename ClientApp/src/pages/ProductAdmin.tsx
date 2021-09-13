@@ -56,10 +56,10 @@ export const ProductAdmin = () => {
                 Crear producto
             </button>
 
-            <table className="table">
+            <table className="table table-striped ">
                 <thead>
                     <tr>
-                        <th>Id</th>
+                        {/* <th>Id</th> */}
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Estatus</th>
@@ -69,9 +69,9 @@ export const ProductAdmin = () => {
                 <tbody>
                     {products?.map((product) => (
                         <tr>
-                            <td>{product.id}</td>
+                            {/* <td>{product.id.toString()}</td> */}
                             <td>{product.name}</td>
-                            <td>{product.description}</td>
+                            <td>{product.description.slice(1, 40)}</td>
                             <td>{product.status}</td>
                             <td>
                                 <button
