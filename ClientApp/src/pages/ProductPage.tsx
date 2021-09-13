@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import Pagination from "react-responsive-pagination";
 import {
     Card,
     CardImg,
@@ -21,16 +22,22 @@ export const ProductPage = () => {
     const history = useHistory();
     const [products, setProducts] = useState<Product[]>();
     const [pagination, setPagintion] = useState<APIResponse<Product>>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(2);
     const [search, setSearch] = useState({
         value: "",
     });
 
     useEffect(() => {
-        axios.get<APIResponse<Product>>("/api/v1/product").then((response) => {
-            setPagintion(response.data);
-            setProducts(response.data.payload);
-        });
-    }, []);
+        axios
+            .get<APIResponse<Product>>("/api/v1/product", {
+                params: { pageSize: pageSize, page: currentPage },
+            })
+            .then((response) => {
+                setPagintion(response.data);
+                setProducts(response.data.payload);
+            });
+    }, [currentPage]);
 
     const handleChange = (event) => {
         setSearch({ value: event.target.value });
@@ -54,11 +61,7 @@ export const ProductPage = () => {
     return (
         <>
             <InputGroup>
-                <Input
-                    placeholder="Buscar producto"
-                    value={search.value}
-                    onChange={handleChange}
-                />
+                <Input placeholder="Buscar producto" value={search.value} onChange={handleChange} />
                 <InputGroupAddon addonType="prepend">
                     <Button onClick={handleClick}>Buscar</Button>
                 </InputGroupAddon>
@@ -67,69 +70,36 @@ export const ProductPage = () => {
             {!pagination && <h3>Cargando...</h3>}
             {pagination && (
                 <div>
-                    <h4>
-                        {pagination?.pagination.total} productos encontrados
-                    </h4>
+                    <h4>{pagination?.pagination.total} productos encontrados</h4>
                     <hr />
                     <div className="row p-3">
                         {products?.map((product) => (
                             <Col lg={4} key={product.id} className="mt-2">
                                 <Card>
                                     <CardBody>
-                                        <CardTitle tag="h5">
-                                            {product.name}
-                                        </CardTitle>
-                                        <CardSubtitle
-                                            tag="h6"
-                                            className="mb-2 text-muted"
-                                        >
+                                        <CardTitle tag="h5">{product.name}</CardTitle>
+                                        <CardSubtitle tag="h6" className="mb-2 text-muted">
                                             Descripción
                                         </CardSubtitle>
-                                        <CardText>
-                                            {product.description}
-                                        </CardText>
+                                        <CardText>{product.description}</CardText>
                                         <hr />
 
-                                        <CardSubtitle
-                                            tag="h6"
-                                            className="mb-2 text-muted"
-                                        >
-                                            Precio: $
-                                            {
-                                                product.prices.find(
-                                                    (e) => e.isDefaultPrice
-                                                ).price
-                                            }
-                                            <ColorElement
-                                                colorValue={
-                                                    product.prices.find(
-                                                        (e) => e.isDefaultPrice
-                                                    ).colorValue
-                                                }
-                                            />
+                                        <CardSubtitle tag="h6" className="mb-2 text-muted">
+                                            Precio: ${product.prices.find((e) => e.isDefaultPrice).price}
+                                            <ColorElement colorValue={product.prices.find((e) => e.isDefaultPrice).colorValue} />
                                         </CardSubtitle>
                                         <hr />
-                                        <CardSubtitle
-                                            tag="h6"
-                                            className="mb-2 text-muted"
-                                        >
+                                        <CardSubtitle tag="h6" className="mb-2 text-muted">
                                             Disponible en:
                                             <br />
                                             {product.prices.map((price) => (
-                                                <ColorElement
-                                                    key={price.id}
-                                                    colorValue={
-                                                        price.colorValue
-                                                    }
-                                                />
+                                                <ColorElement key={price.id} colorValue={price.colorValue} />
                                             ))}
                                         </CardSubtitle>
 
                                         <Button
                                             onClick={() => {
-                                                history.push(
-                                                    `products/${product.id}`
-                                                );
+                                                history.push(`products/${product.id}`);
                                             }}
                                         >
                                             Ver
@@ -139,6 +109,11 @@ export const ProductPage = () => {
                             </Col>
                         ))}
                     </div>
+                    <Pagination
+                        current={currentPage}
+                        total={Math.round(pagination?.pagination.total / pageSize)}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             )}
         </>

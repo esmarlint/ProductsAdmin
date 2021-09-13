@@ -57,12 +57,14 @@ namespace ProductsAdmin.Controllers
                     .AsNoTracking()
                     .AsQueryable();
                 products = ApplayFilter(searchProductQuery, products);
+                int total = products.Count();
 
                 var result = products.Paginate(paginationQuery.Page, paginationQuery.PageSize)
                     .Select(ConvertDatabaseToRest.ConvertProductToProductRestResponse)
                     .ToList();
 
                 var response = new RestPaginatedResponse<ProductRestResponse>(result, paginationQuery);
+                response.Pagination.Total = total;
 
                 return Ok(response);
             }

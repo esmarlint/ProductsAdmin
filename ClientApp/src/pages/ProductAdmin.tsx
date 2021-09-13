@@ -2,18 +2,25 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { APIResponse, Product } from "../models/api.models";
+import Pagination from "react-responsive-pagination";
 
 export const ProductAdmin = () => {
     const history = useHistory();
     const [products, setProducts] = useState<Product[]>();
     const [pagination, setPagintion] = useState<APIResponse<Product>>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(2);
 
     useEffect(() => {
-        axios.get<APIResponse<Product>>("/api/v1/product").then((response) => {
-            setPagintion(response.data);
-            setProducts(response.data.payload);
-        });
-    }, []);
+        axios
+            .get<APIResponse<Product>>("/api/v1/product", {
+                params: { pageSize: pageSize, page: currentPage },
+            })
+            .then((response) => {
+                setPagintion(response.data);
+                setProducts(response.data.payload);
+            });
+    }, [currentPage]);
 
     const handleClick = (event) => {
         event.preventDefault();
@@ -82,6 +89,14 @@ export const ProductAdmin = () => {
                         </tr>
                     ))}
                 </tbody>
+
+                {pagination && (
+                    <Pagination
+                        current={currentPage}
+                        total={Math.round(pagination?.pagination.total / pageSize)}
+                        onPageChange={setCurrentPage}
+                    />
+                )}
             </table>
         </>
     );
