@@ -9,7 +9,7 @@ export const ProductAdmin = () => {
     const [products, setProducts] = useState<Product[]>();
     const [pagination, setPagintion] = useState<APIResponse<Product>>();
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(2);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         axios

@@ -15,15 +15,21 @@ import {
     InputGroupAddon,
     Input,
     Col,
+    InputGroupButtonDropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
 } from "reactstrap";
 import { APIResponse, Price, Product } from "../models/api.models";
 
 export const ProductPage = () => {
     const history = useHistory();
     const [products, setProducts] = useState<Product[]>();
-    const [pagination, setPagintion] = useState<APIResponse<Product>>();
+    const [pagination, setPagination] = useState<APIResponse<Product>>();
+
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(2);
+    const [pageSize, setPageSize] = useState(10);
+
     const [search, setSearch] = useState({
         value: "",
     });
@@ -31,10 +37,14 @@ export const ProductPage = () => {
     useEffect(() => {
         axios
             .get<APIResponse<Product>>("/api/v1/product", {
-                params: { pageSize: pageSize, page: currentPage },
+                params: {
+                    pageSize: pageSize,
+                    page: currentPage,
+                    name: search.value,
+                },
             })
             .then((response) => {
-                setPagintion(response.data);
+                setPagination(response.data);
                 setProducts(response.data.payload);
             });
     }, [currentPage]);
@@ -49,11 +59,13 @@ export const ProductPage = () => {
         axios
             .get<APIResponse<Product>>("/api/v1/product", {
                 params: {
+                    pageSize: pageSize,
+                    page: currentPage,
                     name: search.value,
                 },
             })
             .then((response) => {
-                setPagintion(response.data);
+                setPagination(response.data);
                 setProducts(response.data.payload);
             });
     };
@@ -61,7 +73,7 @@ export const ProductPage = () => {
     return (
         <>
             <InputGroup>
-                <Input placeholder="Buscar producto" value={search.value} onChange={handleChange} />
+                <Input placeholder="Buscar producto por nombre" value={search.value} onChange={handleChange} />
                 <InputGroupAddon addonType="prepend">
                     <Button onClick={handleClick}>Buscar</Button>
                 </InputGroupAddon>
