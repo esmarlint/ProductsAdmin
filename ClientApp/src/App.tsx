@@ -14,7 +14,7 @@ export const App = () => {
     return (
         <LayoutComponent>
             <Switch>
-                <Route exact path="/products/admin/edit" component={ProductEdit} />
+                <Route exact path="/products/admin/edit/:id" component={ProductEdit} />
                 <Route exact path="/products/admin/create" component={ProductCreate} />
                 <Route exact path="/products/admin" component={ProductAdmin} />
                 <Route exact path="/products/:id" component={ProductDetail} />

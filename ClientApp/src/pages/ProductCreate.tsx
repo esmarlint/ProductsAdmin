@@ -59,6 +59,7 @@ export const ProductCreate = () => {
                         <div className="form-group">
                             <label htmlFor="">Nombre</label>
                             <input
+                                required
                                 className="form-control"
                                 type="text"
                                 name="name"
@@ -69,6 +70,7 @@ export const ProductCreate = () => {
                         <div className="form-group">
                             <label htmlFor="">Descripcion</label>
                             <textarea
+                                required
                                 className="form-control"
                                 name="description"
                                 value={form.description}
@@ -78,6 +80,7 @@ export const ProductCreate = () => {
                         <div className="form-group">
                             <label htmlFor="">Estatus</label>
                             <select
+                                required
                                 className="form-control"
                                 name="statusId"
                                 value={form.statusId}
@@ -98,6 +101,7 @@ export const ProductCreate = () => {
                         <div className="form-row">
                             <div className="form-group col">
                                 <input
+                                    required
                                     type="number"
                                     className="form-control"
                                     placeholder="Precio"
@@ -108,17 +112,14 @@ export const ProductCreate = () => {
                             </div>
                             <div className="form-group col">
                                 <select
+                                    required
                                     className="form-control"
                                     name="colorId"
                                     value={form.colorId}
                                     onChange={handleChange}
                                 >
                                     {colors?.map((color) => (
-                                        <option
-                                            key={color.id}
-                                            value={color.id}
-                                            style={{ color: `#${color.value}` }}
-                                        >
+                                        <option key={color.id} value={color.id} style={{ color: `#${color.value}` }}>
                                             {color.name}
                                         </option>
                                     ))}
@@ -128,11 +129,7 @@ export const ProductCreate = () => {
                     </form>
                 </div>
 
-                <button
-                    onClick={handleSubmit}
-                    className="btn btn-primary"
-                    type="submit"
-                >
+                <button onClick={handleSubmit} className="btn btn-primary" type="submit">
                     Crear
                 </button>
             </div>
