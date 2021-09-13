@@ -26,5 +26,6 @@ namespace ProductsAdmin.Models.Api.Responses
         public string ColorValue { get; set; }
         public string ColorName { get; set; }
         public string ColorFormat { get; set; }
+        public int ColorId { get; set; }
     }
 }

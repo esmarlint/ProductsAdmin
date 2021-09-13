@@ -140,6 +140,7 @@ namespace ProductsAdmin.Database.Contexts
             OnModelCreatingPartial(modelBuilder);
 
             modelBuilder.Entity<ProductPrice>().HasQueryFilter(p => p.Status!=3);
+            modelBuilder.Entity<Product>().HasQueryFilter(p => p.Status != 3);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
