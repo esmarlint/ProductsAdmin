@@ -35,6 +35,7 @@ namespace ProductsAdmin.Models.Api
             result.ColorName = target.Color.Name;
             result.ColorValue = target.Color.Value;
             result.ColorFormat = target.Color.Format;
+            result.ColorId = target.Color.Id;
 
             return result;
         }

@@ -33,6 +33,7 @@ export interface Price {
     colorValue: string;
     colorName: string;
     colorFormat: string;
+    colorId: number;
 }
 
 export interface Color {

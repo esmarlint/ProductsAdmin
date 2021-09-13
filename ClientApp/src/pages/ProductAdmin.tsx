@@ -25,17 +25,13 @@ export const ProductAdmin = () => {
     };
 
     const remove = (id) => {
-        const result = window.confirm(
-            "¿Seguro que deseas eliminar este producto?"
-        );
+        const result = window.confirm("¿Seguro que deseas eliminar este producto?");
         if (result) {
             axios.delete(`/api/v1/product/${id}`).then((_) => {
-                axios
-                    .get<APIResponse<Product>>("/api/v1/product")
-                    .then((response) => {
-                        setPagintion(response.data);
-                        setProducts(response.data.payload);
-                    });
+                axios.get<APIResponse<Product>>("/api/v1/product").then((response) => {
+                    setPagintion(response.data);
+                    setProducts(response.data.payload);
+                });
             });
         }
     };
@@ -73,15 +69,13 @@ export const ProductAdmin = () => {
                             <td>
                                 <button
                                     className="btn btn-info mr-2"
-                                    onClick={() => {}}
+                                    onClick={() => {
+                                        history.push(`/products/admin/edit/${product.id}`);
+                                    }}
                                 >
                                     Editar
                                 </button>
-                                <button
-                                    type="button"
-                                    className="btn btn-danger mb"
-                                    onClick={() => remove(product.id)}
-                                >
+                                <button type="button" className="btn btn-danger mb" onClick={() => remove(product.id)}>
                                     Eliminar
                                 </button>
                             </td>
